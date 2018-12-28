@@ -30,6 +30,8 @@ $ react-native run-android
 
 **List** - It is a component used for showing the list of SubReddit movies title.
 
-**ListeItem** - It is a stateless component used for showing the SubReddit each movie title in List component.
+**ListItem** - It is a stateless component used for showing the SubReddit each movie title in List component.
 
-**ListDetail** - It is a component used for showing the details of particular SubReddit movie.
+**ListDetail** - It is a component used for showing the details of particular SubReddit movie which includes title, comments and author name .
+
+**CommentItem** - It is a stateless component used for showing the comment on each movie.
