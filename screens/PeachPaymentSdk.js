@@ -4,6 +4,7 @@
  */
 
 import React, { Component } from "react";
+import { Button, View } from "react-native";
 
 import PeachPayment from "./PeachPayment";
 
@@ -11,11 +12,12 @@ export default class PeachPaymentSdk extends Component {
   async startPayment() {
     const paymentDetails = {
       checkoutId: "",
-      cardHolder: "",
-      cardNumber: "",
-      cardExpiryMonth: "",
-      cardExpiryYear: "",
-      cardCVV: ""
+      cardHolder: "JOHN DOE",
+      cardNumber: "4200000000000000",
+      cardExpiryMonth: "07",
+      cardExpiryYear: "21",
+      cardCVV: "123",
+      saveCardDetails: false
     };
 
     PeachPayment.startPayment(paymentDetails)
@@ -30,11 +32,13 @@ export default class PeachPaymentSdk extends Component {
   /**
    * It will be called after first rendering.
    */
-  componentDidMount() {
-    this.startPayment();
-  }
+  componentDidMount() {}
 
   render() {
-    return null;
+    return (
+      <View style={{ flex: 1, justifyContent: "center", marginHorizontal: 30 }}>
+        <Button title="Pay using Peach Payments" onPress={this.startPayment} />
+      </View>
+    );
   }
 }

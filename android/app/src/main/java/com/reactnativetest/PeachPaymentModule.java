@@ -55,12 +55,17 @@ public class PeachPaymentModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void startPayment(final ReadableMap readableMap, final Promise promise) {
+    public void startPayment(final ReadableMap paymentDetails, final Promise promise) {
 
         Activity currentActivity = getCurrentActivity();
 
         if (currentActivity == null) {
-            promise.reject(Constants.E_ACTIVITY_DOES_NOT_EXIST, "Activity doesn't exist");
+            promise.reject(Constants.E_PAYMENT_DETAILS_NOT_EXIST, "Activity doesn't exist");
+            return;
+        }
+
+        if (paymentDetails == null) {
+            promise.reject(Constants.E_PAYMENT_DETAILS_NOT_EXIST, "Send Payment details");
             return;
         }
 
@@ -70,12 +75,14 @@ public class PeachPaymentModule extends ReactContextBaseJavaModule {
         try {
 
             Intent intent = new Intent(getReactApplicationContext(), PaymentActivity.class);
-            intent.putExtra(Constants.INTENT_PAYMENT_CHECKOUT_ID, readableMap.getString("checkoutId"));
-            intent.putExtra(Constants.INTENT_PAYMENT_CARD_HOLDER_NAME, readableMap.getString("cardHolder"));
-            intent.putExtra(Constants.INTENT_PAYMENT_CARD_NUMBER, readableMap.getString("cardNumber"));
-            intent.putExtra(Constants.INTENT_PAYMENT_CARD_EXPIRY_MONTH, readableMap.getString("cardExpiryMonth"));
-            intent.putExtra(Constants.INTENT_PAYMENT_CARD_EXPIRY_YEAR, readableMap.getString("cardExpiryYear"));
-            intent.putExtra(Constants.INTENT_PAYMENT_CARD_CVV, readableMap.getString("cardCVV"));
+            intent.putExtra(Constants.INTENT_PAYMENT_CHECKOUT_ID, paymentDetails.getString("checkoutId"));
+            intent.putExtra(Constants.INTENT_PAYMENT_CARD_HOLDER_NAME, paymentDetails.getString("cardHolder"));
+            intent.putExtra(Constants.INTENT_PAYMENT_CARD_NUMBER, paymentDetails.getString("cardNumber"));
+            intent.putExtra(Constants.INTENT_PAYMENT_CARD_EXPIRY_MONTH, paymentDetails.getString("cardExpiryMonth"));
+            intent.putExtra(Constants.INTENT_PAYMENT_CARD_EXPIRY_YEAR, paymentDetails.getString("cardExpiryYear"));
+            intent.putExtra(Constants.INTENT_PAYMENT_CARD_CVV, paymentDetails.getString("cardCVV"));
+            intent.putExtra(Constants.INTENT_PAYMENT_CARD_CVV, paymentDetails.hasKey("saveCardDetails") &&
+                    paymentDetails.getBoolean("saveCardDetails"));
             currentActivity.startActivityForResult(intent, Constants.PAYMENT_REQUEST_CODE);
 
         } catch (Exception e) {

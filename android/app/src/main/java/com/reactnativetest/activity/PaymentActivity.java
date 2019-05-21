@@ -88,15 +88,21 @@ public class PaymentActivity extends BasePaymentActivity implements ITransaction
         cardExpiryMonth = intent.getStringExtra(Constants.INTENT_PAYMENT_CARD_EXPIRY_MONTH);
         cardExpiryYear = intent.getStringExtra(Constants.INTENT_PAYMENT_CARD_EXPIRY_YEAR);
         cardCVV = intent.getStringExtra(Constants.INTENT_PAYMENT_CARD_CVV);
+        boolean saveCardDetails = intent.getBooleanExtra(Constants.INTENT_PAYMENT_SAVE_CARD);
 
-        if (providerBinder != null && checkFields()) {
-            if (checkoutId != null) {
-                requestCheckoutInfo(checkoutId);
-                return;
+        showAlertDialog("PAY", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (providerBinder != null && checkFields()) {
+                    if (checkoutId != null) {
+                        requestCheckoutInfo(checkoutId);
+                        return;
+                    }
+                }
+
+                showErrorDialog(getString(R.string.error_message));
             }
-        }
-
-        showErrorDialog(getString(R.string.error_message));
+        });
     }
 
     @Override

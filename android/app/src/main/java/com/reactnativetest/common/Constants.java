@@ -44,7 +44,7 @@ public class Constants {
 
     public static final int PAYMENT_REQUEST_CODE = 215;
 
-    public static final String E_ACTIVITY_DOES_NOT_EXIST = "E_ACTIVITY_DOES_NOT_EXIST";
+    public static final String E_PAYMENT_DETAILS_NOT_EXIST = "E_PAYMENT_DETAILS_NOT_EXIST";
     public static final String E_PAYMENT_CANCELLED = "E_PAYMENT_CANCELLED";
     public static final String E_PAYMENT_ERROR = "E_PAYMENT_ERROR";
 
@@ -54,5 +54,6 @@ public class Constants {
     public static final String INTENT_PAYMENT_CARD_EXPIRY_MONTH = "INTENT_PAYMENT_CARD_EXPIRY_MONTH";
     public static final String INTENT_PAYMENT_CARD_EXPIRY_YEAR = "INTENT_PAYMENT_CARD_EXPIRY_YEAR";
     public static final String INTENT_PAYMENT_CARD_CVV = "INTENT_PAYMENT_CARD_CVV";
+    public static final String INTENT_PAYMENT_SAVE_CARD = "INTENT_PAYMENT_SAVE_CARD";
 
 }
