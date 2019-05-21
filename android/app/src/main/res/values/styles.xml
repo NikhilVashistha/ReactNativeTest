@@ -5,4 +5,13 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="TextInputLayout">
+        <item name="hintTextAppearance">@style/HintTextAppearance</item>
+    </style>
+
+    <style name="HintTextAppearance" parent="@style/TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">#fffaaa</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
 </resources>
