@@ -29,22 +29,6 @@
             android:exported="false"/>
 
         <activity
-            android:name=".activity.CustomUIActivity"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTask">
-
-            <intent-filter>
-                <data android:scheme="@string/custom_ui_callback_scheme"/>
-
-                <action android:name="android.intent.action.VIEW"/>
-
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-            </intent-filter>
-
-        </activity>
-
-        <activity
             android:name=".activity.PaymentActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTask">

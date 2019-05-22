@@ -53,6 +53,7 @@ public class PaymentActivity extends BasePaymentActivity implements ITransaction
     private boolean saveCardDetails;
     private boolean storeCardDetails;
     private String cardToken;
+    private String cardBrand;
 
     private IProviderBinder providerBinder;
     private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -96,11 +97,12 @@ public class PaymentActivity extends BasePaymentActivity implements ITransaction
         saveCardDetails = intent.getBooleanExtra(Constants.INTENT_PAYMENT_SAVE_CARD, false);
         storeCardDetails = intent.getBooleanExtra(Constants.INTENT_PAYMENT_STORE_CARD, false);
         cardToken = intent.getStringExtra(Constants.INTENT_PAYMENT_CARD_TOKEN);
+        cardBrand = intent.getStringExtra(Constants.INTENT_PAYMENT_CARD_BRAND);
 
         showAlertDialog("PAY", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                if (providerBinder != null && checkFields()) {
+                if (providerBinder != null) {
                     if (checkoutId != null) {
                         requestCheckoutInfo(checkoutId);
                         return;
@@ -190,11 +192,11 @@ public class PaymentActivity extends BasePaymentActivity implements ITransaction
 
     private PaymentParams createPaymentParams(String checkoutId) throws PaymentException {
 
-        if(!TextUtils.isEmpty(cardToken)) {
+        if (!TextUtils.isEmpty(cardToken)) {
             return new TokenPaymentParams(
                     checkoutId,
                     cardToken,
-                    Constants.EMPTY_STRING,
+                    cardBrand,
                     cardCVV
             );
         }
@@ -245,7 +247,7 @@ public class PaymentActivity extends BasePaymentActivity implements ITransaction
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(storeCardDetails) {
+                if (storeCardDetails) {
                     storeCard(checkoutId);
                     return;
                 }
@@ -272,7 +274,7 @@ public class PaymentActivity extends BasePaymentActivity implements ITransaction
 
         if (transaction.getTransactionType() == TransactionType.SYNC) {
             /* check the status of synchronous transaction */
-            requestPaymentStatus(resourcePath);
+            sendResourcePath(resourcePath);
         } else {
             /* wait for the callback in the onNewIntent() */
             showProgressDialog(R.string.progress_message_please_wait);

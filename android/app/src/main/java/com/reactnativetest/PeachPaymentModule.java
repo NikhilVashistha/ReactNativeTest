@@ -14,6 +14,9 @@ import com.facebook.react.bridge.ReadableMap;
 import com.reactnativetest.activity.PaymentActivity;
 import com.reactnativetest.common.Constants;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 public class PeachPaymentModule extends ReactContextBaseJavaModule {
 
 
@@ -29,11 +32,16 @@ public class PeachPaymentModule extends ReactContextBaseJavaModule {
                         mPaymentPromise.reject(Constants.E_PAYMENT_CANCELLED, "Payment has been cancelled");
                     } else if (resultCode == Activity.RESULT_OK) {
 
-//                        if (intent.getData() == null) {
-//                            mPaymentPromise.reject(Constants.E_PAYMENT_ERROR, "An error occurred!");
-//                        } else {
-                        mPaymentPromise.resolve("Callback : Greetings from Java");
-//                        }
+                        String resourcePath = intent.getStringExtra(Constants.INTENT_PAYMENT_RESULT);
+                        if (TextUtils.isEmpty(resourcePath)) {
+                            mPaymentPromise.reject(Constants.E_PAYMENT_ERROR, "An error occurred!");
+                        } else {
+                            try {
+                                mPaymentPromise.resolve(URLEncoder.encode(resourcePath, "UTF-8"));
+                            } catch (UnsupportedEncodingException e) {
+                                mPaymentPromise.reject(Constants.E_PAYMENT_ERROR, "An error occurred!");
+                            }
+                        }
                     }
 
                     mPaymentPromise = null;
@@ -101,6 +109,7 @@ public class PeachPaymentModule extends ReactContextBaseJavaModule {
 
             } else {
                 intent.putExtra(Constants.INTENT_PAYMENT_CARD_TOKEN, paymentDetails.getString("cardToken"));
+                intent.putExtra(Constants.INTENT_PAYMENT_CARD_BRAND, paymentDetails.getString("cardBrand"));
             }
 
             intent.putExtra(Constants.INTENT_PAYMENT_CARD_CVV, paymentDetails.getString("cardCVV"));
