@@ -79,6 +79,12 @@ export default class PeachPaymentSdk extends Component {
         }}
       >
         <Text>Peach Payments</Text>
+        <Text>
+          {"cardNumber: 4200000000000000\n" +
+            "cardExpiryMonth: 07\n" +
+            "cardExpiryYear: 2021\n" +
+            "cardCVV: 123"}
+        </Text>
         <Button title="Store Card" onPress={this.storeCardDetails} />
         <Button
           title="Pay using Stored Card"
