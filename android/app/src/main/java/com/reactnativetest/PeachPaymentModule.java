@@ -2,6 +2,7 @@ package com.reactnativetest;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.text.TextUtils;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.BaseActivityEventListener;
@@ -57,6 +58,16 @@ public class PeachPaymentModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void startPayment(final ReadableMap paymentDetails, final Promise promise) {
 
+        getDetails(paymentDetails, promise, false);
+    }
+
+    @ReactMethod
+    public void storeCardDetails(final ReadableMap paymentDetails, final Promise promise) {
+
+        getDetails(paymentDetails, promise, true);
+    }
+
+    private void getDetails(ReadableMap paymentDetails, Promise promise, boolean storeCardDetails) {
         Activity currentActivity = getCurrentActivity();
 
         if (currentActivity == null) {
@@ -76,13 +87,24 @@ public class PeachPaymentModule extends ReactContextBaseJavaModule {
 
             Intent intent = new Intent(getReactApplicationContext(), PaymentActivity.class);
             intent.putExtra(Constants.INTENT_PAYMENT_CHECKOUT_ID, paymentDetails.getString("checkoutId"));
-            intent.putExtra(Constants.INTENT_PAYMENT_CARD_HOLDER_NAME, paymentDetails.getString("cardHolder"));
-            intent.putExtra(Constants.INTENT_PAYMENT_CARD_NUMBER, paymentDetails.getString("cardNumber"));
-            intent.putExtra(Constants.INTENT_PAYMENT_CARD_EXPIRY_MONTH, paymentDetails.getString("cardExpiryMonth"));
-            intent.putExtra(Constants.INTENT_PAYMENT_CARD_EXPIRY_YEAR, paymentDetails.getString("cardExpiryYear"));
+
+            if (!paymentDetails.hasKey("cardToken") || TextUtils.isEmpty(paymentDetails.getString("cardToken"))) {
+
+                intent.putExtra(Constants.INTENT_PAYMENT_CARD_HOLDER_NAME, paymentDetails.getString("cardHolder"));
+                intent.putExtra(Constants.INTENT_PAYMENT_CARD_NUMBER, paymentDetails.getString("cardNumber"));
+                intent.putExtra(Constants.INTENT_PAYMENT_CARD_EXPIRY_MONTH, paymentDetails.getString("cardExpiryMonth"));
+                intent.putExtra(Constants.INTENT_PAYMENT_CARD_EXPIRY_YEAR, paymentDetails.getString("cardExpiryYear"));
+
+                intent.putExtra(Constants.INTENT_PAYMENT_SAVE_CARD, paymentDetails.hasKey("saveCardDetails") &&
+                        paymentDetails.getBoolean("saveCardDetails"));
+                intent.putExtra(Constants.INTENT_PAYMENT_STORE_CARD, storeCardDetails);
+
+            } else {
+                intent.putExtra(Constants.INTENT_PAYMENT_CARD_TOKEN, paymentDetails.getString("cardToken"));
+            }
+
             intent.putExtra(Constants.INTENT_PAYMENT_CARD_CVV, paymentDetails.getString("cardCVV"));
-            intent.putExtra(Constants.INTENT_PAYMENT_CARD_CVV, paymentDetails.hasKey("saveCardDetails") &&
-                    paymentDetails.getBoolean("saveCardDetails"));
+
             currentActivity.startActivityForResult(intent, Constants.PAYMENT_REQUEST_CODE);
 
         } catch (Exception e) {

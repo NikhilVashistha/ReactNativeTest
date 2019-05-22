@@ -4,7 +4,7 @@
  */
 
 import React, { Component } from "react";
-import { Button, View } from "react-native";
+import { Button, View, Text } from "react-native";
 
 import PeachPayment from "./PeachPayment";
 
@@ -15,12 +15,47 @@ export default class PeachPaymentSdk extends Component {
       cardHolder: "JOHN DOE",
       cardNumber: "4200000000000000",
       cardExpiryMonth: "07",
-      cardExpiryYear: "21",
+      cardExpiryYear: "2021",
       cardCVV: "123",
       saveCardDetails: false
     };
 
     PeachPayment.startPayment(paymentDetails)
+      .then(status => {
+        console.log(status);
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  }
+
+  async startPaymentWithStoredCards() {
+    const paymentDetails = {
+      checkoutId: "",
+      cardToken: "",
+      cardCVV: "123"
+    };
+
+    PeachPayment.startPayment(paymentDetails)
+      .then(status => {
+        console.log(status);
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  }
+
+  async storeCardDetails() {
+    const paymentDetails = {
+      checkoutId: "",
+      cardHolder: "JOHN DOE",
+      cardNumber: "4200000000000000",
+      cardExpiryMonth: "07",
+      cardExpiryYear: "2021",
+      cardCVV: "123"
+    };
+
+    PeachPayment.storeCardDetails(paymentDetails)
       .then(status => {
         console.log(status);
       })
@@ -36,8 +71,20 @@ export default class PeachPaymentSdk extends Component {
 
   render() {
     return (
-      <View style={{ flex: 1, justifyContent: "center", marginHorizontal: 30 }}>
-        <Button title="Pay using Peach Payments" onPress={this.startPayment} />
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "space-around",
+          marginHorizontal: 30
+        }}
+      >
+        <Text>Peach Payments</Text>
+        <Button title="Store Card" onPress={this.storeCardDetails} />
+        <Button
+          title="Pay using Stored Card"
+          onPress={this.startPaymentWithStoredCards}
+        />
+        <Button title="Pay" onPress={this.startPayment} />
       </View>
     );
   }

@@ -42,6 +42,9 @@ public class Constants {
 
     public static final String LOG_TAG = "msdk.demo";
 
+
+    public static final String EMPTY_STRING = "";
+
     public static final int PAYMENT_REQUEST_CODE = 215;
 
     public static final String E_PAYMENT_DETAILS_NOT_EXIST = "E_PAYMENT_DETAILS_NOT_EXIST";
@@ -55,5 +58,7 @@ public class Constants {
     public static final String INTENT_PAYMENT_CARD_EXPIRY_YEAR = "INTENT_PAYMENT_CARD_EXPIRY_YEAR";
     public static final String INTENT_PAYMENT_CARD_CVV = "INTENT_PAYMENT_CARD_CVV";
     public static final String INTENT_PAYMENT_SAVE_CARD = "INTENT_PAYMENT_SAVE_CARD";
+    public static final String INTENT_PAYMENT_STORE_CARD = "INTENT_PAYMENT_STORE_CARD";
+    public static final String INTENT_PAYMENT_CARD_TOKEN = "INTENT_PAYMENT_CARD_TOKEN";
 
 }

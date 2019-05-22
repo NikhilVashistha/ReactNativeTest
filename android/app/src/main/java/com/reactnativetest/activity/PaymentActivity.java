@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.oppwa.mobile.connect.exception.PaymentError;
 import com.oppwa.mobile.connect.exception.PaymentException;
@@ -18,6 +19,7 @@ import com.oppwa.mobile.connect.payment.CheckoutInfo;
 import com.oppwa.mobile.connect.payment.ImagesRequest;
 import com.oppwa.mobile.connect.payment.PaymentParams;
 import com.oppwa.mobile.connect.payment.card.CardPaymentParams;
+import com.oppwa.mobile.connect.payment.token.TokenPaymentParams;
 import com.oppwa.mobile.connect.provider.Connect;
 import com.oppwa.mobile.connect.provider.ITransactionListener;
 import com.oppwa.mobile.connect.provider.Transaction;
@@ -48,6 +50,9 @@ public class PaymentActivity extends BasePaymentActivity implements ITransaction
     private String cardExpiryMonth;
     private String cardExpiryYear;
     private String cardCVV;
+    private boolean saveCardDetails;
+    private boolean storeCardDetails;
+    private String cardToken;
 
     private IProviderBinder providerBinder;
     private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -77,7 +82,7 @@ public class PaymentActivity extends BasePaymentActivity implements ITransaction
         setContentView(R.layout.activity_payment);
 
         Intent intent = getIntent();
-        if(intent == null) {
+        if (intent == null) {
             showErrorDialog(getString(R.string.error_message));
             return;
         }
@@ -88,7 +93,9 @@ public class PaymentActivity extends BasePaymentActivity implements ITransaction
         cardExpiryMonth = intent.getStringExtra(Constants.INTENT_PAYMENT_CARD_EXPIRY_MONTH);
         cardExpiryYear = intent.getStringExtra(Constants.INTENT_PAYMENT_CARD_EXPIRY_YEAR);
         cardCVV = intent.getStringExtra(Constants.INTENT_PAYMENT_CARD_CVV);
-        boolean saveCardDetails = intent.getBooleanExtra(Constants.INTENT_PAYMENT_SAVE_CARD);
+        saveCardDetails = intent.getBooleanExtra(Constants.INTENT_PAYMENT_SAVE_CARD, false);
+        storeCardDetails = intent.getBooleanExtra(Constants.INTENT_PAYMENT_STORE_CARD, false);
+        cardToken = intent.getStringExtra(Constants.INTENT_PAYMENT_CARD_TOKEN);
 
         showAlertDialog("PAY", new DialogInterface.OnClickListener() {
             @Override
@@ -168,17 +175,38 @@ public class PaymentActivity extends BasePaymentActivity implements ITransaction
         }
     }
 
+    private void storeCard(String checkoutId) {
+        try {
+            PaymentParams paymentParams = createPaymentParams(checkoutId);
+            paymentParams.setShopperResultUrl(getString(R.string.custom_ui_callback_scheme) + "://callback");
+            Transaction transaction = new Transaction(paymentParams);
+
+            providerBinder.registerTransaction(transaction);
+            showProgressDialog(R.string.progress_message_adding_card);
+        } catch (PaymentException e) {
+            showErrorDialog(e.getError());
+        }
+    }
+
     private PaymentParams createPaymentParams(String checkoutId) throws PaymentException {
 
+        if(!TextUtils.isEmpty(cardToken)) {
+            return new TokenPaymentParams(
+                    checkoutId,
+                    cardToken,
+                    Constants.EMPTY_STRING,
+                    cardCVV
+            );
+        }
         return new CardPaymentParams(
                 checkoutId,
-                Constants.Config.CARD_BRAND,
+                Constants.EMPTY_STRING,
                 cardNumber,
                 cardHolder,
                 cardExpiryMonth,
-                "20" + cardExpiryYear,
+                cardExpiryYear,
                 cardCVV
-        );
+        ).setTokenizationEnabled(saveCardDetails);
     }
 
     @Override
@@ -217,6 +245,10 @@ public class PaymentActivity extends BasePaymentActivity implements ITransaction
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if(storeCardDetails) {
+                    storeCard(checkoutId);
+                    return;
+                }
                 pay(checkoutId);
             }
         });

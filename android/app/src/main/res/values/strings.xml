@@ -34,6 +34,7 @@
     <string name="progress_message_checkout_info">Getting the checkout info…</string>
     <string name="progress_message_payment_status">Getting the payment status…</string>
     <string name="progress_message_processing_payment">Processing payment…</string>
+    <string name="progress_message_adding_card">Adding card…</string>
 
     <string name="error_message">An error occurred</string>
     <string name="error_empty_fields">The fields must not be empty</string>
